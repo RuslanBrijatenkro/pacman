@@ -40,7 +40,10 @@
 			// 
 			// start
 			// 
-			this.start.Location = new System.Drawing.Point(74, 105);
+			this.start.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.start.Location = new System.Drawing.Point(90, 116);
 			this.start.Name = "start";
 			this.start.Size = new System.Drawing.Size(90, 97);
 			this.start.TabIndex = 2;
@@ -54,12 +57,13 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.ClientSize = new System.Drawing.Size(264, 361);
+			this.ClientSize = new System.Drawing.Size(284, 361);
 			this.Controls.Add(this.start);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-			this.MaximumSize = new System.Drawing.Size(280, 400);
-			this.MinimumSize = new System.Drawing.Size(280, 400);
+			this.MaximumSize = new System.Drawing.Size(1000, 1000);
+			this.MinimumSize = new System.Drawing.Size(300, 400);
 			this.Name = "Pacman";
+			this.ShowIcon = false;
 			this.Text = "Pacman";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Pacman_KeyDown);
 			this.ResumeLayout(false);
