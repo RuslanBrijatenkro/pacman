@@ -1,6 +1,6 @@
 ﻿namespace Pacman
 {
-	partial class Pacman
+	partial class Game
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -31,6 +31,7 @@
 			this.components = new System.ComponentModel.Container();
 			this.pacmanMove = new System.Windows.Forms.Timer(this.components);
 			this.start = new System.Windows.Forms.Button();
+			this.redGhostMove = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
 			// pacmanMove
@@ -50,6 +51,11 @@
 			this.start.Text = "start";
 			this.start.UseVisualStyleBackColor = true;
 			this.start.Click += new System.EventHandler(this.start_Click);
+			// 
+			// redGhostMove
+			// 
+			this.redGhostMove.Interval = 20;
+			this.redGhostMove.Tick += new System.EventHandler(this.redGhostMove_Tick);
 			// 
 			// Pacman
 			// 
@@ -73,6 +79,7 @@
 		#endregion
 		private System.Windows.Forms.Timer pacmanMove;
 		private System.Windows.Forms.Button start;
+		private System.Windows.Forms.Timer redGhostMove;
 	}
 }
 

@@ -5,262 +5,176 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static Pacman.Map;
 
 namespace Pacman
 {
-	public partial class Pacman : Form
-	{
-		int[,] startMap =
-		{
-			{1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1},
-			{1,2,2,2,2,0,0,0,0,0,0,0,0,3,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
-			{1,0,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0,1},
-			{1,0,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,0,0,0,1,1,0,1,1,1,1,1,0,1},
-			{1,0,1,1,0,1,1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,1},
-			{1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1},
-			{1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1},
-			{1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1},
-			{1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1},
-			{1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-			{1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,0,1},
-			{1,1,1,1,0,1,1,0,1,1,0,1,0,0,0,1,0,1,1,0,1,1,0,1,1,1,1,1,1,0,1},
-			{1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1,1,0,1},
-			{1,0,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1},
-			{1,0,1,1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1},
-			{1,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,1,1,0,1},
-			{1,1,1,1,0,1,1,0,1,1,0,1,0,0,0,1,0,1,1,0,1,1,0,1,1,1,1,1,1,0,1},
-			{1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,1,1,1,0,1},
-			{1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1},
-			{1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1},
-			{1,0,1,1,1,1,1,0,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,0,1,1,0,1},
-			{1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1},
-			{1,0,1,1,0,1,1,0,1,1,0,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1},
-			{1,0,1,1,0,1,1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,0,0,0,0,1,1,0,1},
-			{1,0,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,0,0,0,1,1,0,1,1,1,1,1,0,1},
-			{1,0,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1,0,1},
-			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
-			{1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1}
-		};
+	public partial class Game : Form
+	{ 
 		int[,] gameMap;
-		Direction direction = 0;
+		PacmanClass pacman;
+		RedGhost redGhost;
+		public int[,] GameMap { get { return gameMap; }}
+
 		Label scoreCounter;
 		Label livesCounter;
-		int step = 2;
-		PictureBox pctPacman;
 
-		Keys previosDirectionCode;
-		int height = 720;
-		int width = 560;
-		int chunkSize = 20;
-		int pacmanPctCenterX;
-		int pacmanPctCenterY;
+
+		int undead;
 		int score;
-		int lives;
+		int lives = 3;
+
 		PictureBox[,] pictures;
-		public Pacman()
+		Label endLabel;
+
+		public Game()
 		{
 			InitializeComponent();
+			pacman = new PacmanClass();
+			redGhost = new RedGhost(this, pacman);
 		}
-		enum Direction : int
-		{
-			Up = 1,
-			Right = 2,
-			Down = 3,
-			Left = 4
-		}
+
 		private void Pacman_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (previosDirectionCode == e.KeyCode)
-				return;
-			switch (e.KeyCode)
-			{
-				case Keys.Up:
-					pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanUp.png";
-					direction = Direction.Up;
-					break;
-				case Keys.Down:
-					pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanDown.png";
-					direction = Direction.Down;
-					break;
-				case Keys.Right:
-					pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanRight.png";
-					direction = Direction.Right;
-					break;
-				case Keys.Left:
-					pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanLeft.png";
-					direction = Direction.Left;
-					break;
-			}
-			previosDirectionCode = e.KeyCode;
+			pacman.PacmanDirection(e);
 		}
-
-
 
 		private void pacmanMove_Tick(object sender, EventArgs e)
 		{
-			pacmanPctCenterX = pctPacman.Location.X + chunkSize / 2;
-			pacmanPctCenterY = pctPacman.Location.Y + chunkSize / 2;
-			switch ((int)direction)
+			pacman.PacmanMove(gameMap);
+			AddScores();
+			TakeOffLive();
+		}
+		void AddScores()
+		{
+			if (gameMap[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize] == 2)
 			{
-				case 1:
-					if (gameMap[pacmanPctCenterX / chunkSize, (pacmanPctCenterY - step) / chunkSize] == 1)
-						break;
-					if(pctPacman.Location.Y -step < 0)
-						pctPacman.Location = new Point(pctPacman.Location.X, height - step);
-					else
-						pctPacman.Location = new Point(pctPacman.Location.X, pctPacman.Location.Y - step);
-					break;
-				case 3:
-					if (gameMap[pacmanPctCenterX / chunkSize, (pacmanPctCenterY + step) / chunkSize] == 1)
-						break;
-					if (pctPacman.Location.Y + step >= Height)
-						pctPacman.Location = new Point(pctPacman.Location.X, 0);
-					else
-						pctPacman.Location = new Point(pctPacman.Location.X, pctPacman.Location.Y + step);
-					break;
-				case 2:
-					if (gameMap[(pacmanPctCenterX + step) / chunkSize, pacmanPctCenterY / chunkSize] == 1)
-						break;
-					if (pctPacman.Location.X + step >= Width)
-						pctPacman.Location = new Point(0, pctPacman.Location.Y);
-					else
-						pctPacman.Location = new Point(pctPacman.Location.X + step, pctPacman.Location.Y);
-					break;
-				case 4:
-					if (gameMap[(pacmanPctCenterX - step) / chunkSize, pacmanPctCenterY / chunkSize] == 1)
-						break;
-					if (pctPacman.Location.X - step < 0)
-						pctPacman.Location = new Point(width - step, pctPacman.Location.Y);
-					else
-						pctPacman.Location = new Point(pctPacman.Location.X - step, pctPacman.Location.Y);
-					break;
-				case 0:
-					break;
-			}
-			if (gameMap[pacmanPctCenterX / chunkSize, pacmanPctCenterY / chunkSize] == 2)
-			{
-				gameMap[pacmanPctCenterX / chunkSize, pacmanPctCenterY / chunkSize] = 0;
+				gameMap[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize] = 0;
 				score += 10;
-				scoreCounter.Text = score.ToString();
-				pictures[pacmanPctCenterX / chunkSize, pacmanPctCenterY / chunkSize].ImageLocation = null;
+				scoreCounter.Text = "Scores\n" + score.ToString();
+				pictures[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize].Image = null;
 			}
-			else if (gameMap[pacmanPctCenterX / chunkSize, pacmanPctCenterY / chunkSize] == 3)
+		}
+		void TakeOffLive()
+		{
+			if ((pacman.PacmanPctCenterX / chunkSize) == (redGhost.redGhostCenterX / chunkSize) && (pacman.PacmanPctCenterY / chunkSize) == (redGhost.redGhostCenterY / chunkSize))
 			{
-				lives -= 1;
-				livesCounter.Text = lives.ToString();
-				if (lives == 0)
+				if (undead > 0) { }
+				else
 				{
-					pacmanMove.Enabled = false;
-					MessageBox.Show("you died");
-					Controls.Clear();
-					lives = 3;
-					score = 0;
-					direction = 0;
-					gameMap = (int[,])startMap.Clone();
-					DrawSchene();
-					pctPacman.Location = new Point(chunkSize, chunkSize);
-					scoreCounter.Text = score.ToString();
-					livesCounter.Text = lives.ToString();
-					pctPacman = new PictureBox();
-					pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanRight.png";
-					pctPacman.Location = new Point(chunkSize, chunkSize);
-					pctPacman.Size = new Size(chunkSize, chunkSize);
-					pctPacman.SizeMode = PictureBoxSizeMode.Zoom;
-					pctPacman.Name = "pctPacman";
-					Controls.Add(pctPacman);
-					pctPacman.BringToFront();
-					pacmanMove.Enabled = true;
+					lives -= 1;
+					livesCounter.Text = "Lives\n" + lives.ToString();
+					if (lives == 0)
+					{
+						pacmanMove.Enabled = false;
+						redGhostMove.Enabled = false;
+						endLabel = AddLabel("You died", width / 2, height / 2);
+						Button retry = new Button();
+						retry.Location = new Point(width / 2, height / 2 + 100);
+						retry.Size = new Size(140, 80);
+						retry.Text = "Retry";
+						retry.BackColor = Color.White;
+						retry.TextAlign = ContentAlignment.MiddleCenter;
+						retry.Font = new Font("Times New Roman", 20f);
+						Controls.Add(retry);
+						retry.BringToFront();
+						endLabel.BringToFront();
+						retry.Click += new EventHandler(retry_Click);
+					}
+					undead = 30;
 				}
 			}
+			if (undead > 0)
+				undead--;
+		}
+		private void retry_Click(object sender, EventArgs e)
+		{
+			Controls.Clear();
+			lives = 3;
+			score = 0;
+			DrawSchene();
+			pacman.direction = 0;
+			pacman.previosDirectionCode = 0;
 		}
 
 		public void DrawSchene()
 		{
+			gameMap = (int[,])Map.startMap.Clone();
+			pacman.pctPacman = AddPictureBox(chunkSize, chunkSize);
+			pacman.pctPacman.Image = Properties.Resources.pacmanRight;
+			pacman.pctPacman.BringToFront();
+
+			scoreCounter = AddLabel("Scores\n" + score.ToString(), width + 100, 50);
+
+			livesCounter = AddLabel("Lives\n" + lives.ToString(), width + 100, 150);
+
 			pictures = new PictureBox[width / chunkSize, height / chunkSize];
 			for (int i = 0; i < 28; i++)
 			{
 				for (int j = 0; j < 31; j++)
 				{
-					if(i==1&j==1)
-						Console.WriteLine();
 					switch (gameMap[i, j])
 					{
 						case 0:
 							break;
 						case 1:
-							PictureBox stone = new PictureBox();
-							stone.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\stone2.jpg";
-							stone.Size = new Size(chunkSize, chunkSize);
-							stone.SizeMode = PictureBoxSizeMode.Zoom;
-							stone.Location = new Point(i * chunkSize, j * chunkSize);
-							Controls.Add(stone);
-							pictures[i, j] = stone;
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							pictures[i, j].Image = Properties.Resources.stone2;
 							break;
 						case 2:
-							PictureBox scorePicture = new PictureBox();
-							scorePicture.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\score2.jpg";
-							scorePicture.Size = new Size(chunkSize, chunkSize);
-							scorePicture.SizeMode = PictureBoxSizeMode.Zoom;
-							scorePicture.Location = new Point(i * chunkSize, j * chunkSize);
-							Controls.Add(scorePicture);
-							pictures[i, j] = scorePicture;
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							pictures[i, j].Image = Properties.Resources.score2;
 							break;
 						case 3:
-							PictureBox redGhost = new PictureBox();
-							redGhost.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\redGhost.jpg";
-							redGhost.Size = new Size(chunkSize, chunkSize);
-							redGhost.SizeMode = PictureBoxSizeMode.Zoom;
-							redGhost.Location = new Point(i * chunkSize, j * chunkSize);
-							Controls.Add(redGhost);
-							pictures[i, j] = redGhost;
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							redGhost.redGhost = pictures[i, j];
+							redGhost.redGhost.Image = Properties.Resources.redGhost;
+							redGhost.redGhost.BringToFront();
 							break;
 
 					}
 				}
 			}
-			Console.WriteLine();
+			this.Focus();
+			pacmanMove.Enabled = true;
+			redGhostMove.Enabled = true;
 		}
 
 		private void start_Click(object sender, EventArgs e)
 		{
-			gameMap = (int[,])startMap.Clone();
 			start.Visible = false;
 			DrawSchene();
-
-			pctPacman = new PictureBox();
-			pctPacman.ImageLocation = @"C:\Users\brija\Desktop\pacman\Pacman\Pacman\images\pacmanRight.png";
-			pctPacman.Location = new Point(chunkSize,chunkSize);
-			pctPacman.Size = new Size(chunkSize, chunkSize);
-			pctPacman.SizeMode = PictureBoxSizeMode.Zoom;
-			pctPacman.Name = "pctPacman";
-			Controls.Add(pctPacman);
-			pctPacman.BringToFront();
-
-			scoreCounter = new Label();
-			scoreCounter.Text = "Scores\n" + score.ToString();
-			scoreCounter.Location = new Point(width + 100, 50);
-			scoreCounter.Size = new Size(100, 60);
-			scoreCounter.Name = "scoreCounter";
-			scoreCounter.BackColor = Color.White;
-			scoreCounter.TextAlign = ContentAlignment.MiddleCenter;
-			scoreCounter.Font = new Font("Times New Roman", 20f);
-			Controls.Add(scoreCounter);
-
-			lives = 3;
-			livesCounter = new Label();
-			livesCounter.Text = "Lives\n" + lives.ToString();
-			livesCounter.Location = new Point(width + 100, 130);
-			livesCounter.Size = new Size(100, 60);
-			livesCounter.Name = "livesCounter";
-			livesCounter.BackColor = Color.White;
-			livesCounter.TextAlign = ContentAlignment.MiddleCenter;
-			livesCounter.Font = new Font("Times New Roman", 20f);
-			Controls.Add(livesCounter);
-
-			pacmanMove.Enabled = true;
-			this.Focus();
 		}
+		PictureBox AddPictureBox(int locationX, int locationY)
+		{
+			PictureBox pictureBox = new PictureBox();
+			pictureBox.Location = new Point(locationX, locationY);
+			pictureBox.Size = new Size(chunkSize, chunkSize);
+			pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+			Controls.Add(pictureBox);
+			return pictureBox;
+		}
+		Label AddLabel(string text, int locationX, int locationY)
+		{
+			Label label = new Label();
+			label.Text = text;
+			label.Location = new Point(locationX, locationY);
+			label.Size = new Size(140, 80);
+			label.BackColor = Color.White;
+			label.TextAlign = ContentAlignment.MiddleCenter;
+			label.Font = new Font("Times New Roman", 20f);
+			Controls.Add(label);
+			return label;
+		}
+
+		private void redGhostMove_Tick(object sender, EventArgs e)
+		{
+			redGhost.RedGhostMove();
+		}
+
+		
 	}
 }
