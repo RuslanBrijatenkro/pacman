@@ -40,9 +40,11 @@ namespace Pacman
 			InitializeComponent();
 			pacman = new PacmanClass();
 			ghostsMoving = new GhostsMoving(this, pacman);
-			ghostMoveTypeTimer = new System.Windows.Forms.Timer();
-			ghostMoveTypeTimer.Interval = 10000;
-			ghostMoveTypeTimer.Tick += new EventHandler(ghostMoveTypeTimer_Tick);
+			ghostMoveTypeTimer = new System.Windows.Forms.Timer
+			{
+				Interval = 10000
+			};
+			ghostMoveTypeTimer.Tick += new EventHandler(GhostMoveTypeTimer_Tick);
 			redGhost = new Ghost();
 			yellowGhost = new Ghost();
 			pinkGhost = new Ghost();
@@ -53,7 +55,7 @@ namespace Pacman
 			pacman.PacmanDirection(e);
 		}
 
-		private void pacmanMove_Tick(object sender, EventArgs e)
+		private void PacmanMove_Tick(object sender, EventArgs e)
 		{
 			pacman.PacmanMove(gameMap);
 			AddScores();
@@ -92,7 +94,7 @@ namespace Pacman
 				ghostMoveTypeTimer.Enabled = true;
 			}
 		}
-		void ghostMoveTypeTimer_Tick(object sender, EventArgs e)
+		void GhostMoveTypeTimer_Tick(object sender, EventArgs e)
 		{
 			ghostsMoving.ghostMoveType = 1;
 			foreach (var ghost in ghosts)
@@ -110,9 +112,9 @@ namespace Pacman
 			Controls.Add(nextLvl);
 			nextLvl.BringToFront();
 			congratulations.BringToFront();
-			nextLvl.Click += new EventHandler(nextLvl_Click);
+			nextLvl.Click += new EventHandler(NextLvl_Click);
 		}
-		void nextLvl_Click(object snder, EventArgs e)
+		void NextLvl_Click(object snder, EventArgs e)
 		{
 			level++;
 			Controls.Clear();
@@ -146,7 +148,7 @@ namespace Pacman
 							Controls.Add(retry);
 							retry.BringToFront();
 							endLabel.BringToFront();
-							retry.Click += new EventHandler(retry_Click);
+							retry.Click += new EventHandler(Retry_Click);
 						}
 						ghost.PacmanUndead = 30;
 					}
@@ -157,16 +159,18 @@ namespace Pacman
 		}
 		Button AddButton(string text)
 		{
-			Button button = new Button();
-			button.Location = new Point(width / 2, height / 2 + 100);
-			button.Size = new Size(140, 80);
-			button.Text = text;
-			button.BackColor = Color.White;
-			button.TextAlign = ContentAlignment.MiddleCenter;
-			button.Font = new Font("Times New Roman", 20f);
+			Button button = new Button
+			{
+				Location = new Point(width / 2, height / 2 + 100),
+				Size = new Size(140, 80),
+				Text = text,
+				BackColor = Color.White,
+				TextAlign = ContentAlignment.MiddleCenter,
+				Font = new Font("Times New Roman", 20f)
+			};
 			return button;
 		}
-		private void retry_Click(object sender, EventArgs e)
+		private void Retry_Click(object sender, EventArgs e)
 		{
 			Controls.Clear();
 			level = 1;
@@ -252,44 +256,48 @@ namespace Pacman
 			pinkGhostMove.Enabled = true;
 		}
 
-		private void start_Click(object sender, EventArgs e)
+		private void Start_Click(object sender, EventArgs e)
 		{
 			start.Visible = false;
 			DrawSchene();
 		}
 		PictureBox AddPictureBox(int locationX, int locationY)
 		{
-			PictureBox pictureBox = new PictureBox();
-			pictureBox.Location = new Point(locationX, locationY);
-			pictureBox.Size = new Size(chunkSize, chunkSize);
-			pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+			PictureBox pictureBox = new PictureBox
+			{
+				Location = new Point(locationX, locationY),
+				Size = new Size(chunkSize, chunkSize),
+				SizeMode = PictureBoxSizeMode.Zoom
+			};
 			Controls.Add(pictureBox);
 			return pictureBox;
 		}
 		Label AddLabel(string text, int locationX, int locationY)
 		{
-			Label label = new Label();
-			label.Text = text;
-			label.Location = new Point(locationX, locationY);
-			label.Size = new Size(140, 80);
-			label.BackColor = Color.White;
-			label.TextAlign = ContentAlignment.MiddleCenter;
-			label.Font = new Font("Times New Roman", 20f);
+			Label label = new Label
+			{
+				Text = text,
+				Location = new Point(locationX, locationY),
+				Size = new Size(140, 80),
+				BackColor = Color.White,
+				TextAlign = ContentAlignment.MiddleCenter,
+				Font = new Font("Times New Roman", 20f)
+			};
 			Controls.Add(label);
 			return label;
 		}
 
-		private void redGhostMove_Tick(object sender, EventArgs e)
+		private void RedGhostMove_Tick(object sender, EventArgs e)
 		{
 			ghostsMoving.GhostsMove(redGhost);
 		}
 
-		private void yellowGhostMove_Tick(object sender, EventArgs e)
+		private void YellowGhostMove_Tick(object sender, EventArgs e)
 		{
 			ghostsMoving.GhostsMove(yellowGhost);
 		}
 
-		private void pinkGhostMove_Tick(object sender, EventArgs e)
+		private void PinkGhostMove_Tick(object sender, EventArgs e)
 		{
 			ghostsMoving.GhostsMove(pinkGhost);
 		}

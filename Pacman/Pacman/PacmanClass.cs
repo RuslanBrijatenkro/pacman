@@ -19,7 +19,7 @@ namespace Pacman
 
 		public PictureBox pctPacman;
 
-		public Direction direction = 0;
+		public Direction direction = (Direction)4;
 		public Keys previosDirectionCode;
 
 		public enum Direction : int
@@ -33,10 +33,7 @@ namespace Pacman
 		public void PacmanDirection(KeyEventArgs e)
 		{
 			if (previosDirectionCode == e.KeyCode)
-			{
-				Console.WriteLine();
 				return;
-			}
 			switch (e.KeyCode)
 			{
 				case Keys.Up:

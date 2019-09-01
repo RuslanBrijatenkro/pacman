@@ -39,7 +39,7 @@
 			// pacmanMove
 			// 
 			this.pacmanMove.Interval = 20;
-			this.pacmanMove.Tick += new System.EventHandler(this.pacmanMove_Tick);
+			this.pacmanMove.Tick += new System.EventHandler(this.PacmanMove_Tick);
 			// 
 			// start
 			// 
@@ -52,22 +52,22 @@
 			this.start.TabIndex = 2;
 			this.start.Text = "start";
 			this.start.UseVisualStyleBackColor = true;
-			this.start.Click += new System.EventHandler(this.start_Click);
+			this.start.Click += new System.EventHandler(this.Start_Click);
 			// 
 			// redGhostMove
 			// 
 			this.redGhostMove.Interval = 20;
-			this.redGhostMove.Tick += new System.EventHandler(this.redGhostMove_Tick);
+			this.redGhostMove.Tick += new System.EventHandler(this.RedGhostMove_Tick);
 			// 
 			// yellowGhostMove
 			// 
 			this.yellowGhostMove.Interval = 25;
-			this.yellowGhostMove.Tick += new System.EventHandler(this.yellowGhostMove_Tick);
+			this.yellowGhostMove.Tick += new System.EventHandler(this.YellowGhostMove_Tick);
 			// 
 			// pinkGhostMove
 			// 
 			this.pinkGhostMove.Interval = 25;
-			this.pinkGhostMove.Tick += new System.EventHandler(this.pinkGhostMove_Tick);
+			this.pinkGhostMove.Tick += new System.EventHandler(this.PinkGhostMove_Tick);
 			// 
 			// Game
 			// 
