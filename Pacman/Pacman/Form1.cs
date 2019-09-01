@@ -13,20 +13,25 @@ using static Pacman.Map;
 namespace Pacman
 {
 	public partial class Game : Form
-	{ 
+	{
+		List<Ghost> ghosts = new List<Ghost>();
 		int[,] gameMap;
+		Random random = new Random();
 		PacmanClass pacman;
-		RedGhost redGhost;
+		GhostsMoving ghostsMoving;
+		Ghost redGhost;
+		Ghost yellowGhost;
+		Ghost pinkGhost;
 		public int[,] GameMap { get { return gameMap; }}
-
+		Button retry;
 		Label scoreCounter;
 		Label livesCounter;
-
-
-		int undead;
+		Label levelCounter;
+		System.Windows.Forms.Timer ghostMoveTypeTimer;
+		int ballsCount;
 		int score;
 		int lives = 3;
-
+		int level = 1;
 		PictureBox[,] pictures;
 		Label endLabel;
 
@@ -34,7 +39,13 @@ namespace Pacman
 		{
 			InitializeComponent();
 			pacman = new PacmanClass();
-			redGhost = new RedGhost(this, pacman);
+			ghostsMoving = new GhostsMoving(this, pacman);
+			ghostMoveTypeTimer = new System.Windows.Forms.Timer();
+			ghostMoveTypeTimer.Interval = 10000;
+			ghostMoveTypeTimer.Tick += new EventHandler(ghostMoveTypeTimer_Tick);
+			redGhost = new Ghost();
+			yellowGhost = new Ghost();
+			pinkGhost = new Ghost();
 		}
 
 		private void Pacman_KeyDown(object sender, KeyEventArgs e)
@@ -46,6 +57,14 @@ namespace Pacman
 		{
 			pacman.PacmanMove(gameMap);
 			AddScores();
+			if (ballsCount == 0)
+			{
+				pacmanMove.Enabled = false;
+				redGhostMove.Enabled = false;
+				yellowGhostMove.Enabled = false;
+				pinkGhostMove.Enabled = false;
+				NextLevel();
+			}
 			TakeOffLive();
 		}
 		void AddScores()
@@ -54,45 +73,103 @@ namespace Pacman
 			{
 				gameMap[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize] = 0;
 				score += 10;
+				ballsCount--;
 				scoreCounter.Text = "Scores\n" + score.ToString();
 				pictures[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize].Image = null;
 			}
+			if (gameMap[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize] == 4)
+			{
+				gameMap[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize] = 0;
+				score += random.Next(100, 500);
+				ballsCount--;
+				scoreCounter.Text = "Scores\n" + score.ToString();
+				pictures[pacman.PacmanPctCenterX / chunkSize, pacman.PacmanPctCenterY / chunkSize].Image = null;
+				ghostsMoving.ghostMoveType = 2;
+				foreach (var ghost in ghosts)
+				{
+					ghost.pctGhost.Image = Properties.Resources.scaredGhost;
+				}
+				ghostMoveTypeTimer.Enabled = true;
+			}
+		}
+		void ghostMoveTypeTimer_Tick(object sender, EventArgs e)
+		{
+			ghostsMoving.ghostMoveType = 1;
+			foreach (var ghost in ghosts)
+			{
+				ghost.pctGhost.Image = Properties.Resources.redGhost;
+			}
+			ghostMoveTypeTimer.Enabled = false;
+		}
+		void NextLevel()
+		{
+			Button nextLvl;
+			Label congratulations;
+			congratulations = AddLabel("Good Job", width/2,height/2);
+			nextLvl = AddButton("Next lvl");
+			Controls.Add(nextLvl);
+			nextLvl.BringToFront();
+			congratulations.BringToFront();
+			nextLvl.Click += new EventHandler(nextLvl_Click);
+		}
+		void nextLvl_Click(object snder, EventArgs e)
+		{
+			level++;
+			Controls.Clear();
+			DrawSchene();
+			pacman.direction = 0;
+			pacman.previosDirectionCode = 0;
+			pacmanMove.Enabled = true;
+			redGhostMove.Enabled = true;
+			yellowGhostMove.Enabled = true;
+			pinkGhostMove.Enabled = true;
 		}
 		void TakeOffLive()
 		{
-			if ((pacman.PacmanPctCenterX / chunkSize) == (redGhost.redGhostCenterX / chunkSize) && (pacman.PacmanPctCenterY / chunkSize) == (redGhost.redGhostCenterY / chunkSize))
+			foreach(var ghost in ghosts)
 			{
-				if (undead > 0) { }
-				else
+				if ((pacman.PacmanPctCenterX / chunkSize) == (ghost.GhostCenterX / chunkSize) && (pacman.PacmanPctCenterY / chunkSize) == (ghost.GhostCenterY / chunkSize))
 				{
-					lives -= 1;
-					livesCounter.Text = "Lives\n" + lives.ToString();
-					if (lives == 0)
+					if (ghost.PacmanUndead > 0) { }
+					else
 					{
-						pacmanMove.Enabled = false;
-						redGhostMove.Enabled = false;
-						endLabel = AddLabel("You died", width / 2, height / 2);
-						Button retry = new Button();
-						retry.Location = new Point(width / 2, height / 2 + 100);
-						retry.Size = new Size(140, 80);
-						retry.Text = "Retry";
-						retry.BackColor = Color.White;
-						retry.TextAlign = ContentAlignment.MiddleCenter;
-						retry.Font = new Font("Times New Roman", 20f);
-						Controls.Add(retry);
-						retry.BringToFront();
-						endLabel.BringToFront();
-						retry.Click += new EventHandler(retry_Click);
+						lives -= 1;
+						livesCounter.Text = "Lives\n" + lives.ToString();
+						if (lives == 0)
+						{
+							pacmanMove.Enabled = false;
+							redGhostMove.Enabled = false;
+							yellowGhostMove.Enabled = false;
+							pinkGhostMove.Enabled = false;
+							endLabel = AddLabel("You died", width / 2, height / 2);
+							retry = AddButton("Retry");
+							Controls.Add(retry);
+							retry.BringToFront();
+							endLabel.BringToFront();
+							retry.Click += new EventHandler(retry_Click);
+						}
+						ghost.PacmanUndead = 30;
 					}
-					undead = 30;
 				}
+				if (ghost.PacmanUndead > 0)
+					ghost.PacmanUndead--;
 			}
-			if (undead > 0)
-				undead--;
+		}
+		Button AddButton(string text)
+		{
+			Button button = new Button();
+			button.Location = new Point(width / 2, height / 2 + 100);
+			button.Size = new Size(140, 80);
+			button.Text = text;
+			button.BackColor = Color.White;
+			button.TextAlign = ContentAlignment.MiddleCenter;
+			button.Font = new Font("Times New Roman", 20f);
+			return button;
 		}
 		private void retry_Click(object sender, EventArgs e)
 		{
 			Controls.Clear();
+			level = 1;
 			lives = 3;
 			score = 0;
 			DrawSchene();
@@ -103,6 +180,7 @@ namespace Pacman
 		public void DrawSchene()
 		{
 			gameMap = (int[,])Map.startMap.Clone();
+
 			pacman.pctPacman = AddPictureBox(chunkSize, chunkSize);
 			pacman.pctPacman.Image = Properties.Resources.pacmanRight;
 			pacman.pctPacman.BringToFront();
@@ -110,6 +188,8 @@ namespace Pacman
 			scoreCounter = AddLabel("Scores\n" + score.ToString(), width + 100, 50);
 
 			livesCounter = AddLabel("Lives\n" + lives.ToString(), width + 100, 150);
+
+			levelCounter = AddLabel("Level\n" + level.ToString(), width + 100, 250);
 
 			pictures = new PictureBox[width / chunkSize, height / chunkSize];
 			for (int i = 0; i < 28; i++)
@@ -119,28 +199,57 @@ namespace Pacman
 					switch (gameMap[i, j])
 					{
 						case 0:
+							if (ballsCount == 3)
+								break;
+							if (random.Next(0, 10) > 5)
+							{
+								ballsCount++;
+								gameMap[i, j] = 2;
+								pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+								pictures[i, j].Image = Properties.Resources.score2;
+							}
 							break;
 						case 1:
 							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
 							pictures[i, j].Image = Properties.Resources.stone2;
 							break;
-						case 2:
-							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
-							pictures[i, j].Image = Properties.Resources.score2;
-							break;
 						case 3:
 							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
-							redGhost.redGhost = pictures[i, j];
-							redGhost.redGhost.Image = Properties.Resources.redGhost;
-							redGhost.redGhost.BringToFront();
+							redGhost.pctGhost = pictures[i, j];
+							redGhost.pctGhost.Image = Properties.Resources.redGhost;
+							redGhost.Name = "Red";
+							redGhost.pctGhost.BringToFront();
+							ghosts.Add(redGhost);
 							break;
-
+						case 4:
+							ballsCount++;
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							pictures[i, j].Image = Properties.Resources.treasure;
+							break;
+						case 5:
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							yellowGhost.pctGhost = pictures[i, j];
+							yellowGhost.pctGhost.Image = Properties.Resources.redGhost;
+							yellowGhost.Name = "Yellow";
+							yellowGhost.pctGhost.BringToFront();
+							ghosts.Add(yellowGhost);
+							break;
+						case 6:
+							pictures[i, j] = AddPictureBox(i * chunkSize, j * chunkSize);
+							pinkGhost.pctGhost = pictures[i, j];
+							pinkGhost.pctGhost.Image = Properties.Resources.redGhost;
+							pinkGhost.Name = "Pink";
+							pinkGhost.pctGhost.BringToFront();
+							ghosts.Add(pinkGhost);
+							break;
 					}
 				}
 			}
 			this.Focus();
 			pacmanMove.Enabled = true;
 			redGhostMove.Enabled = true;
+			yellowGhostMove.Enabled = true;
+			pinkGhostMove.Enabled = true;
 		}
 
 		private void start_Click(object sender, EventArgs e)
@@ -172,9 +281,17 @@ namespace Pacman
 
 		private void redGhostMove_Tick(object sender, EventArgs e)
 		{
-			redGhost.RedGhostMove();
+			ghostsMoving.GhostsMove(redGhost);
 		}
 
-		
+		private void yellowGhostMove_Tick(object sender, EventArgs e)
+		{
+			ghostsMoving.GhostsMove(yellowGhost);
+		}
+
+		private void pinkGhostMove_Tick(object sender, EventArgs e)
+		{
+			ghostsMoving.GhostsMove(pinkGhost);
+		}
 	}
 }

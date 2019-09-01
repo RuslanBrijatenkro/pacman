@@ -30,7 +30,6 @@ namespace Pacman
 			Left = 2
 		}
 
-
 		public void PacmanDirection(KeyEventArgs e)
 		{
 			if (previosDirectionCode == e.KeyCode)
@@ -63,6 +62,7 @@ namespace Pacman
 		{
 			pacmanPctCenterX = pctPacman.Location.X + chunkSize / 2;
 			pacmanPctCenterY = pctPacman.Location.Y + chunkSize / 2;
+
 			switch ((int)direction)
 			{
 				case 1:

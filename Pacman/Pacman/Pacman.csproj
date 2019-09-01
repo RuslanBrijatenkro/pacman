@@ -52,11 +52,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Ghost.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="PacmanClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RedGhost.cs" />
+    <Compile Include="GhostsMoving.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,6 +113,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\yellowGhost.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\score.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\treasure.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\scaredGhost.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

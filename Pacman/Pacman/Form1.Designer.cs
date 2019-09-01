@@ -32,6 +32,8 @@
 			this.pacmanMove = new System.Windows.Forms.Timer(this.components);
 			this.start = new System.Windows.Forms.Button();
 			this.redGhostMove = new System.Windows.Forms.Timer(this.components);
+			this.yellowGhostMove = new System.Windows.Forms.Timer(this.components);
+			this.pinkGhostMove = new System.Windows.Forms.Timer(this.components);
 			this.SuspendLayout();
 			// 
 			// pacmanMove
@@ -57,7 +59,17 @@
 			this.redGhostMove.Interval = 20;
 			this.redGhostMove.Tick += new System.EventHandler(this.redGhostMove_Tick);
 			// 
-			// Pacman
+			// yellowGhostMove
+			// 
+			this.yellowGhostMove.Interval = 25;
+			this.yellowGhostMove.Tick += new System.EventHandler(this.yellowGhostMove_Tick);
+			// 
+			// pinkGhostMove
+			// 
+			this.pinkGhostMove.Interval = 25;
+			this.pinkGhostMove.Tick += new System.EventHandler(this.pinkGhostMove_Tick);
+			// 
+			// Game
 			// 
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -68,7 +80,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
 			this.MaximumSize = new System.Drawing.Size(1000, 1000);
 			this.MinimumSize = new System.Drawing.Size(300, 400);
-			this.Name = "Pacman";
+			this.Name = "Game";
 			this.ShowIcon = false;
 			this.Text = "Pacman";
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Pacman_KeyDown);
@@ -80,6 +92,8 @@
 		private System.Windows.Forms.Timer pacmanMove;
 		private System.Windows.Forms.Button start;
 		private System.Windows.Forms.Timer redGhostMove;
+		private System.Windows.Forms.Timer yellowGhostMove;
+		private System.Windows.Forms.Timer pinkGhostMove;
 	}
 }
 
